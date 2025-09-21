@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.plusAssign
 import com.example.aichaprototype110.datastore.ThemePreference
+import com.example.aichaprototype110.live2d.demo.JniBridgeJava
 import com.example.aichaprototype110.renderer.Live2DGLView
 import com.example.aichaprototype110.ui.theme.AIchaNavGraph
 import com.example.aichaprototype110.ui.theme.AIchaPrototype110Theme
@@ -33,9 +34,9 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    external fun stringFromJNI(): String
+    //external fun stringFromJNI(): String
 
-    external fun nativeSetAssetManager(assetManager: AssetManager)
+    //external fun nativeSetAssetManager(assetManager: AssetManager)
 
     private lateinit var themePreference: ThemePreference
     private lateinit var googleCloudSpeechHelper: GoogleCloudSpeechHelper
@@ -54,9 +55,7 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        nativeSetAssetManager(assets)
-
+        JniBridgeJava.setAssetManager(assets)
         themePreference = ThemePreference(this)
 
         setContent {
@@ -75,7 +74,8 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     // Live2D background
-                    Live2DView()
+                    val live2DView = Live2DGLView(this)
+                    setContentView(live2DView)
 
                     // Navigation
                     AIchaNavGraph(
@@ -102,7 +102,7 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        Log.d("JNI", stringFromJNI())
+        //Log.d("JNI", stringFromJNI())
 
         requestPermissionLauncher.launch(
             arrayOf(

@@ -13,6 +13,6 @@ public class JniBridgeJava {
     public static native void onTouch(float x, float y);
 
     static {
-        System.loadLibrary("native-lib");
+        System.loadLibrary("aichaprototype110");
     }
 }
