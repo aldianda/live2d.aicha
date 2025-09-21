@@ -33,8 +33,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private lateinit var live2DView: Live2DGLView
-
     external fun stringFromJNI(): String
 
     external fun nativeSetAssetManager(assetManager: AssetManager)
@@ -77,8 +75,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     // Live2D background
-                    live2DView = Live2DGLView(this)
-                    setContentView(live2DView)
+                    Live2DView()
 
                     // Navigation
                     AIchaNavGraph(

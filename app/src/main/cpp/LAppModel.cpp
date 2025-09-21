@@ -4,8 +4,6 @@
 #include <string>
 #include <android/asset_manager_jni.h>
 #include <android/asset_manager.h>
-#include <android/log.h>
-
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
@@ -67,85 +65,70 @@ LAppModel::~LAppModel() {
     }
 }
 
-void LAppModel::CreateRenderer()
-{
-    if (_renderer) return; // already created
 
-    _renderer = static_cast<CubismRenderer_OpenGLES2*>(CubismRenderer_OpenGLES2::Create());
+void LAppModel::LoadAssets(AAssetManager* mgr, const std::string& dir, const std::string& filename) {
+    _modelDir = dir + "/";
+    std::string jsonPath = _modelDir + filename;
 
-    if (_renderer == nullptr) {
-        __android_log_print(ANDROID_LOG_ERROR, "LAppModel", "Renderer creation FAILED!");
-    } else {
-        __android_log_print(ANDROID_LOG_INFO, "LAppModel", "Renderer created OK!");
+    // --- 1. Load model3.json dari assets ---
+    std::vector<uint8_t> jsonBuf;
+    if (!LoadAssetToBuffer(mgr, jsonPath, jsonBuf)) {
+        LAppPal::PrintLog("[LAppModel] Gagal buka JSON dari asset: %s", jsonPath.c_str());
+        return;
     }
+
+    // --- 2. Parse JSON, ambil path moc3 ---
+    rapidjson::Document doc;
+    doc.Parse(reinterpret_cast<const char*>(jsonBuf.data()), jsonBuf.size());
+    if (doc.HasParseError()) {
+        LAppPal::PrintLog("[LAppModel] ERROR: JSON parse error model3.json %s", jsonPath.c_str());
+        return;
+    }
+    if (!doc.HasMember("FileReferences") || !doc["FileReferences"].HasMember("Moc")) {
+        LAppPal::PrintLog("[LAppModel] ERROR: model3.json ga ada path 'FileReferences.Moc'!");
+        return;
+    }
+    std::string moc3Path = _modelDir + doc["FileReferences"]["Moc"].GetString();
+
+    // --- 3. Load file .moc3 ---
+    std::vector<uint8_t> mocBuf;
+    if (!LoadAssetToBuffer(mgr, moc3Path, mocBuf)) {
+        LAppPal::PrintLog("[LAppModel] Gagal load moc3: %s", moc3Path.c_str());
+        return;
+    }
+
+    // --- 4. Load model pakai buffer moc3 ---
+    this->LoadModel(mocBuf.data(), static_cast<csmSizeType>(mocBuf.size()));
+
+    if (!this->GetModel()) {
+        LAppPal::PrintLog("[LAppModel] ERROR: Model gagal di-load. Cek file moc3!");
+        return;
+    }
+
+    // --- 5. Renderer + load texture ---
+    _renderer = dynamic_cast<CubismRenderer_OpenGLES2*>(CubismRenderer_OpenGLES2::Create());
     if (_renderer) {
         _renderer->Initialize(this->GetModel());
         _renderer->SetClippingMaskBufferSize(256, 256);
-    } else {
-        LAppPal::PrintLog("[LAppModel] Renderer creation failed!");
-    }
-}
 
+        ICubismModelSetting* setting = this->GetModelSetting();
+        if (!setting) return;
 
-void LAppModel::LoadAssets(AAssetManager* mgr, const std::string& dir, const std::string& filename)
-{
-    _modelDir = dir + "/";
-    std::string jsonPath = _modelDir + filename;
-    LAppPal::PrintLog("[LAppModel] LoadAssets: %s", jsonPath.c_str());
-
-    // --- 1. Load model3.json into buffer ---
-    std::vector<uint8_t> jsonBuf;
-    if (!LoadAssetToBuffer(mgr, jsonPath, jsonBuf)) {
-        LAppPal::PrintLog("[LAppModel] ERROR: gagal buka JSON %s", jsonPath.c_str());
-        return;
-    }
-
-    // --- 2. Parse JSON as CubismModelSettingJson ---
-    _modelSetting = new CubismModelSettingJson(jsonBuf.data(), jsonBuf.size());
-
-    // --- 3. Get moc3 file path ---
-    std::string moc3Path = _modelDir + _modelSetting->GetModelFileName();
-
-    // --- 4. Load moc3 file ---
-    std::vector<uint8_t> mocBuf;
-    if (!LoadAssetToBuffer(mgr, moc3Path, mocBuf)) {
-        LAppPal::PrintLog("[LAppModel] ERROR: gagal load moc3 %s", moc3Path.c_str());
-        return;
-    }
-
-    // --- 5. Create Cubism model ---
-    this->LoadModel(mocBuf.data(), static_cast<csmSizeType>(mocBuf.size()));
-    if (!this->GetModel()) {
-        LAppPal::PrintLog("[LAppModel] ERROR: Model gagal di-load dari moc3!");
-        return;
-    }
-
-    // --- 6. Create renderer (OpenGLES2) ---
-    if (this->GetModel()) {
-        CreateRenderer();
-    }
-    if (!_renderer) {
-        LAppPal::PrintLog("[LAppModel] ERROR: Renderer gagal dibuat!");
-        return;
-    }
-
-    // --- 7. Load and bind textures ---
-    const int texCount = _modelSetting->GetTextureCount();
-    for (int i = 0; i < texCount; ++i) {
-        const char* texName = _modelSetting->GetTextureFileName(i);
-        if (!texName) continue;
-
-        std::string texPath = _modelDir + texName;
-        GLuint texId = LoadTextureFromAsset(mgr, texPath);
-        if (texId) {
-            _renderer->BindTexture(i, texId);
-            LAppPal::PrintLog("[LAppModel] Texture loaded: %s", texPath.c_str());
-        } else {
-            LAppPal::PrintLog("[LAppModel] ERROR: gagal load texture %s", texPath.c_str());
+        int texCount = setting->GetTextureCount();
+        for (int i = 0; i < texCount; ++i) {
+            const char* texName = setting->GetTextureFileName(i);
+            if (!texName) continue;
+            std::string texPath = _modelDir + texName;
+            GLuint texId = LoadTextureFromAsset(mgr, texPath);
+            if (texId)
+                _renderer->BindTexture(i, texId);
+            else
+                LAppPal::PrintLog("[LAppModel] Gagal load texture: %s", texPath.c_str());
         }
+    } else {
+        LAppPal::PrintLog("[LAppModel] Gagal create renderer");
     }
 }
-
 
 void LAppModel::Update(float deltaTimeSeconds) {
     _userTimeSeconds += deltaTimeSeconds;
