@@ -1,0 +1,9 @@
+target_sources(${LIB_NAME}
+  PRIVATE
+        CubismOffscreenSurface_OpenGLES2.cpp
+        CubismOffscreenSurface_OpenGLES2.hpp
+        CubismShader_OpenGLES2.cpp
+        CubismShader_OpenGLES2.hpp
+        CubismRenderer_OpenGLES2.cpp
+        CubismRenderer_OpenGLES2.hpp
+)

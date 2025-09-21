@@ -1,0 +1,9 @@
+target_sources(${LIB_NAME}
+  PRIVATE
+        CubismDebug.cpp
+        CubismDebug.hpp
+        CubismJson.cpp
+        CubismJson.hpp
+        CubismString.cpp
+        CubismString.hpp
+)

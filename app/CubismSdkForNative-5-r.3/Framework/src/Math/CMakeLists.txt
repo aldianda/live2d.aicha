@@ -1,0 +1,15 @@
+target_sources(${LIB_NAME}
+  PRIVATE
+        CubismMath.cpp
+        CubismMath.hpp
+        CubismMatrix44.cpp
+        CubismMatrix44.hpp
+        CubismModelMatrix.cpp
+        CubismModelMatrix.hpp
+        CubismTargetPoint.cpp
+        CubismTargetPoint.hpp
+        CubismVector2.cpp
+        CubismVector2.hpp
+        CubismViewMatrix.cpp
+        CubismViewMatrix.hpp
+)

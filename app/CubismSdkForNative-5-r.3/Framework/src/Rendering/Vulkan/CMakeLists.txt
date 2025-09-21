@@ -1,0 +1,9 @@
+target_sources(${LIB_NAME}
+  PRIVATE
+        CubismClass_Vulkan.cpp
+        CubismClass_Vulkan.hpp
+        CubismOffscreenSurface_Vulkan.cpp
+        CubismOffscreenSurface_Vulkan.hpp
+        CubismRenderer_Vulkan.cpp
+        CubismRenderer_Vulkan.hpp
+)

@@ -1,0 +1,27 @@
+target_sources(${APP_NAME}
+  PRIVATE
+        NapiBridgeC.cpp
+        NapiBridgeC.hpp
+        LAppAllocator.cpp
+        LAppAllocator.hpp
+        LAppDefine.cpp
+        LAppDefine.hpp
+        LAppDelegate.cpp
+        LAppDelegate.hpp
+        LAppLive2DManager.cpp
+        LAppLive2DManager.hpp
+        LAppModel.cpp
+        LAppModel.hpp
+        LAppPal.cpp
+        LAppPal.hpp
+        LAppSprite.cpp
+        LAppSprite.hpp
+        LAppSpriteShader.cpp
+        LAppSpriteShader.hpp
+        LAppTextureManager.cpp
+        LAppTextureManager.hpp
+        LAppView.cpp
+        LAppView.hpp
+        TouchManager.cpp
+        TouchManager.hpp
+)

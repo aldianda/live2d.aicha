@@ -1,0 +1,27 @@
+target_sources(${APP_NAME}
+  PRIVATE
+        JniBridgeC.cpp
+        JniBridgeC.hpp
+        LAppAllocator.cpp
+        LAppAllocator.hpp
+        LAppDefine.cpp
+        LAppDefine.hpp
+        LAppMinimumDelegate.cpp
+        LAppMinimumDelegate.hpp
+        LAppMinimumLive2DManager.cpp
+        LAppMinimumLive2DManager.hpp
+        LAppMinimumModel.cpp
+        LAppMinimumModel.hpp
+        LAppPal.cpp
+        LAppPal.hpp
+        LAppSprite.cpp
+        LAppSprite.hpp
+        LAppSpriteShader.cpp
+        LAppSpriteShader.hpp
+        LAppTextureManager.cpp
+        LAppTextureManager.hpp
+        LAppMinimumView.cpp
+        LAppMinimumView.hpp
+        TouchManager.cpp
+        TouchManager.hpp
+)

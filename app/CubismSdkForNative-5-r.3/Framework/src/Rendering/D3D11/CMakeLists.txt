@@ -1,0 +1,13 @@
+target_sources(${LIB_NAME}
+  PRIVATE
+        CubismNativeInclude_D3D11.hpp
+        CubismOffscreenSurface_D3D11.cpp
+        CubismOffscreenSurface_D3D11.hpp
+        CubismRenderer_D3D11.cpp
+        CubismRenderer_D3D11.hpp
+        CubismRenderState_D3D11.cpp
+        CubismRenderState_D3D11.hpp
+        CubismShader_D3D11.cpp
+        CubismShader_D3D11.hpp
+        CubismType_D3D11.hpp
+)

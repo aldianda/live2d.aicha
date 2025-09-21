@@ -1,0 +1,32 @@
+target_sources(${APP_NAME}
+  PRIVATE
+        LAppAllocator.cpp
+        LAppAllocator.hpp
+        LAppDefine.cpp
+        LAppDefine.hpp
+        LAppDelegate.cpp
+        LAppDelegate.hpp
+        LAppWavFileHandler.cpp
+        LAppWavFileHandler.hpp
+        LAppLive2DManager.cpp
+        LAppLive2DManager.hpp
+        LAppModel.cpp
+        LAppModel.hpp
+        LAppPal.cpp
+        LAppPal.hpp
+        LAppSprite.cpp
+        LAppSprite.hpp
+        LAppSpritePipeline.cpp
+        LAppSpritePipeline.hpp
+        LAppTextureManager.cpp
+        LAppTextureManager.hpp
+        LAppView.cpp
+        LAppView.hpp
+        main.cpp
+        TouchManager.cpp
+        TouchManager.hpp
+        VulkanManager.cpp
+        VulkanManager.hpp
+        SwapchainManager.cpp
+        SwapchainManager.hpp
+)

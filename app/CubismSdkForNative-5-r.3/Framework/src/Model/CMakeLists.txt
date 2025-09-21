@@ -1,0 +1,13 @@
+target_sources(${LIB_NAME}
+  PRIVATE
+        CubismMoc.cpp
+        CubismMoc.hpp
+        CubismModel.cpp
+        CubismModel.hpp
+        CubismModelUserData.cpp
+        CubismModelUserData.hpp
+        CubismModelUserDataJson.cpp
+        CubismModelUserDataJson.hpp
+        CubismUserModel.cpp
+        CubismUserModel.hpp
+)

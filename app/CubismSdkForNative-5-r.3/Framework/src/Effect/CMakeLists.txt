@@ -1,0 +1,9 @@
+target_sources(${LIB_NAME}
+  PRIVATE
+        CubismBreath.cpp
+        CubismBreath.hpp
+        CubismEyeBlink.cpp
+        CubismEyeBlink.hpp
+        CubismPose.cpp
+        CubismPose.hpp
+)

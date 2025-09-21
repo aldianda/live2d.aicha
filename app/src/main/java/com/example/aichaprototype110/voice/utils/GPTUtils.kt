@@ -9,7 +9,7 @@ import org.json.JSONObject
 import java.io.IOException
 
 object GPTUtils {
-    private const val API_KEY = "sk-proj-ftOICKXOTaA29Vec5wc4UAz10bkuus-HIas35wpdyz7NqZ2_Wxg5AcPLyApKelznhizQ-H53vkT3BlbkFJwy5b7DI9oieh_NE9kPbeOkz3YtMw8hUTFfAHisqmU5z_PF0ajrJe-oFMZX12aGxGMW3kFZlGwAY"
+    private const val API_KEY = ""
     private const val ENDPOINT = "https://api.openai.com/v1/chat/completions"
     private const val MODEL = "gpt-4o-mini"
 

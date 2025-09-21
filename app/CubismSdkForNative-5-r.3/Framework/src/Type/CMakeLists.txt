@@ -1,0 +1,10 @@
+target_sources(${LIB_NAME}
+  PRIVATE
+        csmMap.hpp
+        csmRectF.cpp
+        csmRectF.hpp
+        csmString.cpp
+        csmString.hpp
+        csmVector.hpp
+        CubismBasicType.hpp
+)

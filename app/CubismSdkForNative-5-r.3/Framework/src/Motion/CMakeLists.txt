@@ -1,0 +1,20 @@
+target_sources(${LIB_NAME}
+  PRIVATE
+        ACubismMotion.cpp
+        ACubismMotion.hpp
+        CubismExpressionMotion.cpp
+        CubismExpressionMotion.hpp
+        CubismExpressionMotionManager.cpp
+        CubismExpressionMotionManager.hpp
+        CubismMotion.cpp
+        CubismMotion.hpp
+        CubismMotionInternal.hpp
+        CubismMotionJson.cpp
+        CubismMotionJson.hpp
+        CubismMotionManager.cpp
+        CubismMotionManager.hpp
+        CubismMotionQueueEntry.cpp
+        CubismMotionQueueEntry.hpp
+        CubismMotionQueueManager.cpp
+        CubismMotionQueueManager.hpp
+)
