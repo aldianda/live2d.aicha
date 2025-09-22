@@ -1,0 +1,134 @@
+diff --git a/app/src/main/cpp/CMakeLists.txt b/app/src/main/cpp/CMakeLists.txt
+index 1111111..2222222 100644
+--- a/app/src/main/cpp/CMakeLists.txt
++++ b/app/src/main/cpp/CMakeLists.txt
+@@ -5,9 +5,12 @@ cmake_minimum_required(VERSION 3.4.1)
+ 
+ add_library(
+         aichaprototype110
+         SHARED
+-        aichaprototype110.cpp
+-        # other files...
++        aichaprototype110.cpp
++        LAppModel.cpp
+ )
+ 
+ include_directories(
+         ${CMAKE_SOURCE_DIR}/
++        ${CMAKE_SOURCE_DIR}/Live2DFramework/
++        ${CMAKE_SOURCE_DIR}/
+ )
+diff --git a/app/src/main/cpp/LAppModel.cpp b/app/src/main/cpp/LAppModel.cpp
+new file mode 100644
+index 0000000..1234567
+--- /dev/null
++++ b/app/src/main/cpp/LAppModel.cpp
+@@ -0,0 +1,80 @@
++#include "LAppModel.hpp"
++#include "CubismModelSettingJson.hpp"
++#include "Rendering/OpenGL/CubismRenderer_OpenGLES2.hpp"
++#include <android/log.h>
++
++using namespace Live2D::Cubism::Framework;
++using namespace Live2D::Cubism::Framework::Rendering;
++
++#define LOG_TAG "Live2D_LAppModel"
++#define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
++#define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
++
++LAppModel::LAppModel() : CubismUserModel() {
++    LOGI("LAppModel constructor");
++}
++
++LAppModel::~LAppModel() {
++    LOGI("LAppModel destructor");
++}
++
++void LAppModel::LoadAssets(const std::string& modelDir, const std::string& modelJsonFileName) {
++    LOGI("LoadAssets: %s%s", modelDir.c_str(), modelJsonFileName.c_str());
++
++    std::string jsonPath = modelDir + modelJsonFileName;
++
++    csmByte* buffer = nullptr;
++    csmSizeInt size = 0;
++    LoadFileAsBytes(jsonPath, &buffer, &size); // TODO: implement with AAssetManager
++    if (buffer == nullptr || size == 0) {
++        LOGE("Failed to load JSON file: %s", jsonPath.c_str());
++        return;
++    }
++
++    auto setting = new CubismModelSettingJson(buffer, size);
++    std::string mocFileName = setting->GetModelFileName();
++    std::string mocPath = modelDir + mocFileName;
++
++    LoadModel(mocPath.c_str());
++
++    CreateRendererIfNeeded();
++}
++
++void LAppModel::CreateRendererIfNeeded() {
++    if (GetRenderer<CubismRenderer_OpenGLES2>() == nullptr) {
++        auto renderer = CubismRenderer_OpenGLES2::Create();
++        SetRenderer<CubismRenderer_OpenGLES2>(renderer);
++        LOGI("Renderer created");
++    }
++}
++
++void LAppModel::Draw() {
++    auto renderer = GetRenderer<CubismRenderer_OpenGLES2>();
++    if (renderer) {
++        this->Update();
++        renderer->DrawModel();
++    } else {
++        LOGE("Draw called but renderer is NULL");
++    }
++}
+diff --git a/app/src/main/cpp/LAppModel.hpp b/app/src/main/cpp/LAppModel.hpp
+new file mode 100644
+index 0000000..abcdef1
+--- /dev/null
++++ b/app/src/main/cpp/LAppModel.hpp
+@@ -0,0 +1,20 @@
++#pragma once
++
++#include "CubismUserModel.hpp"
++#include <string>
++
++class LAppModel : public Live2D::Cubism::Framework::CubismUserModel {
++public:
++    LAppModel();
++    ~LAppModel();
++
++    void LoadAssets(const std::string& modelDir, const std::string& modelJsonFileName);
++    void CreateRendererIfNeeded();
++    void Draw();
++};
+diff --git a/app/src/main/cpp/aichaprototype110.cpp b/app/src/main/cpp/aichaprototype110.cpp
+index abc1234..def5678 100644
+--- a/app/src/main/cpp/aichaprototype110.cpp
++++ b/app/src/main/cpp/aichaprototype110.cpp
+@@ -15,6 +15,8 @@
+ #include <GLES2/gl2.h>
+ 
++#include "LAppModel.hpp"
++
+ #include "CubismFramework.hpp"
+ #include "LAppAllocator.hpp"
+ #include "LAppLive2DManager.hpp"
+@@ -50,10 +52,14 @@ extern "C"
+ JNIEXPORT void JNICALL
+ Java_com_example_aichaprototype110_live2d_demo_JniBridgeJava_onDrawFrame(JNIEnv *env, jclass clazz) {
+-    auto model = LAppLive2DManager::GetInstance()->GetModel(0);
+-    if (model == nullptr) {
+-        LAppLive2DManager::GetInstance()->CreateModel("Aicha");
+-    }
+-    model->Draw();
++    static LAppModel* s_model = nullptr;
++    if (s_model == nullptr) {
++        s_model = new LAppModel();
++        s_model->LoadAssets("Live2D/Aicha/", "Aicha.model3.json"); // adjust path if needed
++    }
++    if (s_model) {
++        s_model->Draw();
++    }
+ }

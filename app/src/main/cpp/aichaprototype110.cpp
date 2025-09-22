@@ -1,28 +1,26 @@
-// aichaprototype110.cpp
 #include <jni.h>
-#include <string>
 #include <android/log.h>
 #include <android/asset_manager_jni.h>
-#include <GLES2/gl2.h>
+#include <android/asset_manager.h>
+#include <string>
 
 #include "CubismFramework.hpp"
 #include "LAppAllocator.hpp"
-#include "LAppLive2DManager.hpp" // path may vary in your repo
 #include "LAppModel.hpp"
-
-#define LOG_TAG "Live2D_JNI"
-#define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
-#define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
 
 using namespace Live2D::Cubism::Framework;
 
-// global allocator and asset manager
+#define LOG_TAG "Live2D"
+#define LOGI(...) __android_log_print(ANDROID_LOG_INFO,  LOG_TAG, __VA_ARGS__)
+#define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
+
 static LAppAllocator g_allocator;
 static AAssetManager* g_assetManager = nullptr;
+static LAppModel* g_model = nullptr;
 
 extern "C" {
 
-// set the AssetManager from Java so native can read assets
+// ✅ Set AssetManager dari Java
 JNIEXPORT void JNICALL
 Java_com_example_aichaprototype110_live2d_demo_JniBridgeJava_setAssetManager(
         JNIEnv* env,
@@ -30,98 +28,95 @@ Java_com_example_aichaprototype110_live2d_demo_JniBridgeJava_setAssetManager(
         jobject assetManager) {
     g_assetManager = AAssetManager_fromJava(env, assetManager);
     if (g_assetManager) {
-        LOGI("AssetManager set in native code");
+        LOGI("AAssetManager set successfully");
     } else {
-        LOGE("Failed to get AAssetManager");
+        LOGE("Failed to set AAssetManager");
     }
 }
 
-// optional init function if you want a distinct init
+// ✅ Init Live2D
 JNIEXPORT void JNICALL
 Java_com_example_aichaprototype110_live2d_demo_JniBridgeJava_initLive2D(
         JNIEnv* env,
-        jclass /*clazz*/) {
+        jclass clazz) {
+    LOGI("Initializing Live2D...");
 
-    LOGI("initLive2D called");
+    CubismFramework::Option option;
+    option.LoggingLevel = CubismFramework::Option::LogLevel_Verbose;
 
-    if (!CubismFramework::IsStarted()) {
-        CubismFramework::Option option;
-        option.LoggingLevel = CubismFramework::Option::LogLevel_Verbose;
-        if (!CubismFramework::StartUp(&g_allocator, &option)) {
-            LOGE("Cubism StartUp failed");
-            return;
-        }
-        CubismFramework::Initialize(&option);
-        LOGI("Cubism framework initialized");
+    if (!CubismFramework::StartUp(&g_allocator, &option)) {
+        LOGE("CubismFramework::StartUp failed!");
+        return;
     }
 
-    // If you prefer, create model here; we create in onSurfaceChanged below to ensure GL context exists
+    CubismFramework::Initialize(&option);
+    LOGI("CubismFramework initialized");
+
+    // load model di sini nanti (cek asset manager dulu)
+    if (!g_assetManager) {
+        LOGE("AssetManager is NULL, model cannot be loaded!");
+        return;
+    }
+
+    // sementara log dulu
+    LOGI("Ready to load model JSON & moc3 using AAssetManager");
 }
 
-// called when surface is created (GL context ready)
+// ✅ OnSurfaceCreated
 JNIEXPORT void JNICALL
 Java_com_example_aichaprototype110_live2d_demo_JniBridgeJava_onSurfaceCreated(
         JNIEnv* env,
-        jclass /*clazz*/) {
-    LOGI("onSurfaceCreated()");
-    // nothing heavy here; we just ensure Cubism is started
-    if (!CubismFramework::IsStarted()) {
-        Java_com_example_aichaprototype110_live2d_demo_JniBridgeJava_initLive2D(env, nullptr);
+        jclass clazz) {
+    LOGI("onSurfaceCreated called");
+
+    if (!g_model) {
+        g_model = new LAppModel();
+        LOGI("LAppModel created");
+
+        // load asset Live2D pertama kali
+        g_model-> LoadAssets(g_assetManager, "app/src/main/assets/Icha", "Icha.model3.json");
     }
 }
 
-// called when surface changed (width/height known) -> we can create model safely and set viewport
+// ✅ OnSurfaceChanged
 JNIEXPORT void JNICALL
 Java_com_example_aichaprototype110_live2d_demo_JniBridgeJava_onSurfaceChanged(
         JNIEnv* env,
-        jclass /*clazz*/,
+        jclass clazz,
         jint width,
         jint height) {
-
-    LOGI("onSurfaceChanged: %d x %d", width, height);
-    // set viewport
-    glViewport(0, 0, width, height);
-
-    // create/load model if not loaded
-    auto manager = LAppLive2DManager::GetInstance();
-    if (manager->GetModel(0) == nullptr) {
-        // IMPORTANT: adjust the model folder name to match your assets folder
-        manager->CreateModel("Aicha");
-        LOGI("Requested CreateModel(\"Aicha\")");
-    } else {
-        LOGI("Model already exists");
-    }
+    LOGI("onSurfaceChanged: width=%d, height=%d", width, height);
 }
 
-// called each frame
+// ✅ OnDrawFrame
 JNIEXPORT void JNICALL
 Java_com_example_aichaprototype110_live2d_demo_JniBridgeJava_onDrawFrame(
         JNIEnv* env,
-        jclass /*clazz*/) {
+        jclass clazz) {
+    LOGI("onDrawFrame start");
 
-    auto manager = LAppLive2DManager::GetInstance();
-    auto model = manager->GetModel(0);
-    if (model) {
-        model->Update();
-        model->Draw();
-    } else {
-        LOGE("[LAppModel] Renderer NULL or model not created yet!");
+    if (!g_model) {
+        LOGE("g_model is NULL! Renderer cannot draw");
+        return;
     }
+
+    g_model->Update(1);
+    g_model->Draw();
+    LOGI("onDrawFrame finished");
 }
 
-// destroy / release
+// ✅ Destroy
 JNIEXPORT void JNICALL
 Java_com_example_aichaprototype110_live2d_demo_JniBridgeJava_destroy(
         JNIEnv* env,
-        jclass /*clazz*/) {
-    LOGI("destroy() called");
-    auto manager = LAppLive2DManager::GetInstance();
-    manager->ReleaseAllModels();
+        jclass clazz) {
+    LOGI("Destroy called");
 
-    if (CubismFramework::IsStarted()) {
-        CubismFramework::Dispose();
-        LOGI("Cubism framework disposed");
-    }
+    delete g_model;
+    g_model = nullptr;
+
+    CubismFramework::Dispose();
+    LOGI("CubismFramework disposed");
 }
 
 } // extern "C"

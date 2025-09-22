@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "399895033749",
+    "project_id": "aicha-prototype-2",
+    "storage_bucket": "aicha-prototype-2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:399895033749:android:44c2fd9bb6217cfd6ea89c",
+        "android_client_info": {
+          "package_name": "com.example.aichaprototype110"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8fAxpYJrq5_npMxb0J1xppLjXzVVVEjw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
