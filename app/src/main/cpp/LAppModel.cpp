@@ -113,7 +113,7 @@ void LAppModel::LoadAssets(AAssetManager* mgr, const std::string& dir, const std
         // Full width (ganti 1.0f/1.5f/2.0f sesuai kebutuhan)
         matrix->SetCenterPosition(0.0f, 0.0f);
         matrix->Translate(0.0f, 0.0f); // Jika ingin geser
-        matrix->Scale(1.0f, 1.0f); // Scaling manual jika perlu
+        matrix->Scale(2.0f, 2.0f); // Scaling manual jika perlu
     }
 
     // --- 5. Renderer + load texture ---

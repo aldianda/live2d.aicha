@@ -45,6 +45,10 @@ Java_com_example_aichaprototype110_live2d_Live2DView_initNative(JNIEnv* env, job
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_aichaprototype110_live2d_Live2DView_renderNative(JNIEnv* env, jobject thiz) {
+    // Set the clear color (R, G, B, A) - e.g., magenta
+    glClearColor(1.0f, 0.0f, 1.0f, 1.0f); // Magenta (change to your desired color)
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     if (s_live2DManager) {
         s_live2DManager->OnUpdate();
     }
