@@ -1,12 +1,12 @@
 {
 	"Version": 3,
 	"FileReferences": {
-		"Moc": "Icha.moc3",
+		"Moc": "shidiq.moc3",
 		"Textures": [
-			"Icha.2048/texture_00.png"
+			"shidiq.2048/texture_00.png"
 		],
-		"Physics": "Icha.physics3.json",
-		"DisplayInfo": "Icha.cdi3.json"
+		"Physics": "shidiq.physics3.json",
+		"DisplayInfo": "shidiq.cdi3.json"
 	},
 	"Groups": [
 		{

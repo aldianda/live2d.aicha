@@ -8,6 +8,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -68,36 +69,38 @@ class MainActivity : ComponentActivity() {
             LaunchedEffect(Unit) {
                 themePreference.isDarkMode.collect { isDarkTheme = it }
             }
-
+            Live2DView()
             AIchaPrototype110Theme(darkTheme = isDarkTheme) {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    // Live2D background
-                    Live2DView()
+                Box(Modifier.fillMaxSize()) {
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = MaterialTheme.colorScheme.background
+                    ) {
+                        // Live2D background
 
-                    // Navigation
-                    AIchaNavGraph(
-                        navController = navController,
-                        startDestination = if (currentUser != null) "home" else "login",
-                        isDarkTheme = isDarkTheme,
-                        onThemeToggle = { isDark ->
-                            scope.launch {
-                                themePreference.saveDarkMode(isDark)
-                                isDarkTheme = isDark
+
+                        // Navigation
+                        AIchaNavGraph(
+                            navController = navController,
+                            startDestination = if (currentUser != null) "home" else "login",
+                            isDarkTheme = isDarkTheme,
+                            onThemeToggle = { isDark ->
+                                scope.launch {
+                                    themePreference.saveDarkMode(isDark)
+                                    isDarkTheme = isDark
+                                }
+                            },
+                            onLogout = {
+                                FirebaseAuth.getInstance().signOut()
+                                scope.launch {
+                                    themePreference.saveDarkMode(false)
+                                }
+                                navController.navigate("login") {
+                                    popUpTo("home") { inclusive = true }
+                                }
                             }
-                        },
-                        onLogout = {
-                            FirebaseAuth.getInstance().signOut()
-                            scope.launch {
-                                themePreference.saveDarkMode(false)
-                            }
-                            navController.navigate("login") {
-                                popUpTo("home") { inclusive = true }
-                            }
-                        }
-                    )
+                        )
+                    }
                 }
             }
         }

@@ -67,8 +67,9 @@ LAppModel::~LAppModel() {
 
 
 void LAppModel::LoadAssets(AAssetManager* mgr, const std::string& dir, const std::string& filename) {
-    _modelDir = dir + "/";
-    std::string jsonPath = _modelDir + filename;
+    //_modelDir = dir + "/";
+    _modelDir = "Icha/";
+    std::string jsonPath = _modelDir + "shidiq.model3.json";
     LAppPal::PrintLog("[LAppModel] lokasi file : %s", jsonPath.c_str());
     // --- 1. Load model3.json dari assets ---
     std::vector<uint8_t> jsonBuf;
@@ -105,6 +106,14 @@ void LAppModel::LoadAssets(AAssetManager* mgr, const std::string& dir, const std
     if (!this->GetModel()) {
         LAppPal::PrintLog("[LAppModel] ERROR: Model gagal di-load. Cek file moc3!");
         return;
+    }
+
+    Csm::CubismModelMatrix* matrix = this->GetModelMatrix();
+    if (matrix) {
+        // Full width (ganti 1.0f/1.5f/2.0f sesuai kebutuhan)
+        matrix->SetCenterPosition(0.0f, 0.0f);
+        matrix->Translate(0.0f, 0.0f); // Jika ingin geser
+        matrix->Scale(1.0f, 1.0f); // Scaling manual jika perlu
     }
 
     // --- 5. Renderer + load texture ---
