@@ -69,7 +69,7 @@ LAppModel::~LAppModel() {
 void LAppModel::LoadAssets(AAssetManager* mgr, const std::string& dir, const std::string& filename) {
     _modelDir = dir + "/";
     std::string jsonPath = _modelDir + filename;
-
+    LAppPal::PrintLog("[LAppModel] lokasi file : %s", jsonPath.c_str());
     // --- 1. Load model3.json dari assets ---
     std::vector<uint8_t> jsonBuf;
     if (!LoadAssetToBuffer(mgr, jsonPath, jsonBuf)) {
@@ -92,6 +92,8 @@ void LAppModel::LoadAssets(AAssetManager* mgr, const std::string& dir, const std
 
     // --- 3. Load file .moc3 ---
     std::vector<uint8_t> mocBuf;
+    LAppPal::PrintLog("[LAppModel] Lokasi moc3: %s", moc3Path.c_str());
+
     if (!LoadAssetToBuffer(mgr, moc3Path, mocBuf)) {
         LAppPal::PrintLog("[LAppModel] Gagal load moc3: %s", moc3Path.c_str());
         return;
