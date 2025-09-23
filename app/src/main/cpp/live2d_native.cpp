@@ -4,8 +4,7 @@
 #include <android/asset_manager.h>
 #include <GLES2/gl2.h>
 
-#include <Live2D/Cubism/Core/csmModel.hpp>
-#include <Live2D/Cubism/Core/csmMoc.hpp>
+#include "CubismModelSettingJson.hpp"
 
 #define LOG_TAG "Live2D_Native"
 #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
@@ -32,8 +31,7 @@ Java_com_example_aichaprototype110_renderer_Live2DNativeLib_setAssetManager(
 JNIEXPORT void JNICALL
 Java_com_example_aichaprototype110_renderer_Live2DNativeLib_init(
         JNIEnv* env,
-        jobject thiz,
-        jstring model_path
+        jobject thiz
 ) {
     if (!assetManager) {
         LOGE("Asset manager not set!");

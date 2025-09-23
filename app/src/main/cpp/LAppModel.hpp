@@ -18,7 +18,7 @@ public:
 
     void LoadAssets(const std::string& dir, const std::string& filename);
     void LoadAssets(AAssetManager *mgr, const std::string& dir, const std::string& filename);
-
+    void SetProjection(int width, int height);
     void Update(float deltaTimeSeconds);
     void Draw();
 

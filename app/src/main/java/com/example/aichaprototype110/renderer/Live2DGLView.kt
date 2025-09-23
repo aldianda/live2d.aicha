@@ -2,6 +2,7 @@ package com.example.aichaprototype110.renderer
 
 import android.content.Context
 import android.opengl.GLSurfaceView
+import com.example.aichaprototype110.live2d.demo.Live2D
 
 class Live2DGLView(context: Context) : GLSurfaceView(context), GLSurfaceView.Renderer {
 

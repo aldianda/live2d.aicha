@@ -21,4 +21,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "AIcha Prototype 1.1.0"
 include(":app")
- 

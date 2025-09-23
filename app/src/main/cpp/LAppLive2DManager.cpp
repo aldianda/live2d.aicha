@@ -37,7 +37,7 @@ void LAppLive2DManager::Initialize(int width, int height) {
 
 void LAppLive2DManager::LoadModel() {
     _model = std::make_unique<LAppModel>();
-    _model->LoadAssets("Icha", "Icha.model3.json");
+    _model->LoadAssets("Icha", "Shidiq.model3.json");
 }
 
 void LAppLive2DManager::OnUpdate() {

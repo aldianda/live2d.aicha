@@ -126,10 +126,12 @@ void LAppModel::LoadAssets(AAssetManager* mgr, const std::string& dir, const std
         if (!setting) return;
 
         int texCount = setting->GetTextureCount();
+        LAppPal::PrintLog("[LAppModel] mulai merender model");
         for (int i = 0; i < texCount; ++i) {
             const char* texName = setting->GetTextureFileName(i);
             if (!texName) continue;
             std::string texPath = _modelDir + texName;
+            LAppPal::PrintLog("[LAppModel] lokasi texture: %s", texPath.c_str());
             GLuint texId = LoadTextureFromAsset(mgr, texPath);
             if (texId)
                 _renderer->BindTexture(i, texId);
@@ -141,6 +143,25 @@ void LAppModel::LoadAssets(AAssetManager* mgr, const std::string& dir, const std
     }
 }
 
+void LAppModel::SetProjection(int width, int height) {
+    float aspect = (float)width / (float)height;
+    CubismMatrix44 projection;
+    projection.LoadIdentity();
+    if (width > height)
+    {
+        projection.Scale(1.0f, aspect);
+    }
+    else
+    {
+        projection.Scale(1.0f / aspect, 1.0f);
+    }
+
+    if (_renderer)
+    {
+        _renderer->SetMvpMatrix(&projection);
+    }
+}
+
 void LAppModel::Update(float deltaTimeSeconds) {
     _userTimeSeconds += deltaTimeSeconds;
 }
@@ -148,9 +169,13 @@ void LAppModel::Update(float deltaTimeSeconds) {
 void LAppModel::Draw() {
     if (_renderer) {
         LAppPal::PrintLog("[LAppModel] Try Draw Frame...");
+        LAppPal::PrintLog("LAppModel::Draw() start");
         _renderer->PreDraw();
         _renderer->DrawModel();
         _renderer->PostDraw();
+        LAppPal::PrintLog("LAppModel::Draw() end");
+
+
         LAppPal::PrintLog("[LAppModel] Draw Model Done.");
     } else {
         LAppPal::PrintLog("[LAppModel] Renderer NULL!");
